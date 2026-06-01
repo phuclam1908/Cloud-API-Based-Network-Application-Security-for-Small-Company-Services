@@ -1,0 +1,11 @@
+# Private keys
+*.key
+*.pem
+
+# Secrets
+manifests/keycloak/00-secret.yaml
+project_secrets.env
+*.env
+
+# Backup
+*.bak
