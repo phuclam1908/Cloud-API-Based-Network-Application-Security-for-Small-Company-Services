@@ -1,0 +1,11 @@
+auth:
+  database: keycloak
+  username: keycloak
+  password: "keycloak_db_pass_123"
+primary:
+  persistence:
+    size: 2Gi
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m

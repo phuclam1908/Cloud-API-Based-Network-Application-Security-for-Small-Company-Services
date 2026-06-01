@@ -1,0 +1,58 @@
+# Kong config — apply bằng Admin API, không phải kubectl
+# Chạy sau khi Kong pod Running
+# Script: bash ~/nt219/manifests/kong/apply-config.sh
+
+services:
+- name: users-api
+  url: http://users-api.apps.svc.cluster.local:8000
+- name: resources-api
+  url: http://resources-api.apps.svc.cluster.local:8000
+- name: admin-api
+  url: http://admin-api.apps.svc.cluster.local:8000
+
+routes:
+- name: users-route
+  service: users-api
+  paths: [/api/users]
+- name: resources-route
+  service: resources-api
+  paths: [/api/resources]
+- name: admin-route
+  service: admin-api
+  paths: [/api/admin]
+
+plugins:
+- name: jwt
+  config:
+    key_claim_name: iss
+    claims_to_verify: [exp]
+    maximum_expiration: 300
+- name: rate-limiting
+  config:
+    minute: 60
+    hour: 1000
+    policy: local
+- name: cors
+  config:
+    origins: ["*"]
+    credentials: true
+- name: correlation-id
+  config:
+    header_name: X-Request-Id
+- name: request-size-limiting
+  config:
+    allowed_payload_size: 4
+    size_unit: megabytes
+
+consumer:
+  username: keycloak-issuer
+  jwt_credential:
+    algorithm: RS256
+    key: http://KEYCLOAK_CLUSTERIP/realms/company
+    # rsa_public_key: lấy từ JWKS endpoint lúc deploy
+
+# webhook-svc (thêm sau Phase 6)
+# Service: webhook-svc → http://webhook-svc.apps.svc.cluster.local:8000
+# Route: webhook-route → POST /api/webhooks (KHÔNG có JWT plugin)
+# JWT plugin chỉ apply trên: users-route, resources-route, admin-route
+# webhook-route dùng HMAC-SHA256 verify trong service code

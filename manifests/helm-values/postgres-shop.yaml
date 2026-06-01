@@ -1,0 +1,11 @@
+auth:
+  database: shopdb
+  username: shop
+  password: "shop_db_pass_123"
+primary:
+  persistence:
+    size: 3Gi
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 10m

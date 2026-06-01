@@ -1,0 +1,11 @@
+auth:
+  database: kong
+  username: kong
+  password: "kong_db_pass_123"
+primary:
+  persistence:
+    size: 2Gi
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 100m

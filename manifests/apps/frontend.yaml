@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-html
+  namespace: apps
+data:
+  index.html: |
+    PLACEHOLDER
+  serve.py: |
+    from fastapi import FastAPI
+    from fastapi.responses import FileResponse
+    app = FastAPI()
+    @app.get("/{path:path}")
+    async def root(path: str = ""):
+        return FileResponse("/app/index.html")
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: docker.io/library/users-api:latest
+        imagePullPolicy: Never
+        command: ["uvicorn", "serve:app", "--host", "0.0.0.0", "--port", "80"]
+        volumeMounts:
+        - name: html
+          mountPath: /app/index.html
+          subPath: index.html
+        - name: html
+          mountPath: /app/serve.py
+          subPath: serve.py
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "10m"
+      volumes:
+      - name: html
+        configMap:
+          name: frontend-html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: apps
+spec:
+  selector:
+    app: frontend
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP

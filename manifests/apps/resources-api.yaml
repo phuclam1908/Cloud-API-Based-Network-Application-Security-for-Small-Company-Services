@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resources-api
+  namespace: apps
+  labels:
+    app: resources-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resources-api
+  template:
+    metadata:
+      labels:
+        app: resources-api
+    spec:
+      containers:
+      - name: resources-api
+        image: docker.io/library/resources-api:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: JWKS_URL
+          value: "http://keycloak.keycloak.svc.cluster.local/realms/company/protocol/openid-connect/certs"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resources-api
+  namespace: apps
+spec:
+  selector:
+    app: resources-api
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: ClusterIP

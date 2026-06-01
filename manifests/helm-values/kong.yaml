@@ -1,0 +1,29 @@
+replicaCount: 1
+env:
+  database: postgres
+  pg_host: "kong-postgres-postgresql.kong.svc.cluster.local"
+  pg_user: kong
+  pg_password: "kong_db_pass_123"
+  pg_database: kong
+postgresql:
+  enabled: false
+proxy:
+  type: NodePort
+  http:
+    nodePort: 32080
+  tls:
+    nodePort: 32443
+admin:
+  enabled: true
+  type: NodePort
+  http:
+    enabled: true
+    nodePort: 30528
+  tls:
+    enabled: false
+ingressController:
+  enabled: false
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
