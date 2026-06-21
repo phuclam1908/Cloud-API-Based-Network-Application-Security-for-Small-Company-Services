@@ -47,9 +47,9 @@ plugins:
 consumer:
   username: keycloak-issuer
   jwt_credential:
-    algorithm: RS256
+    algorithm: ES256
     key: http://KEYCLOAK_CLUSTERIP/realms/company
-    # rsa_public_key: lấy từ JWKS endpoint lúc deploy
+    # ecdsa_public_key: lấy từ JWKS endpoint lúc deploy
 
 # webhook-svc (thêm sau Phase 6)
 # Service: webhook-svc → http://webhook-svc.apps.svc.cluster.local:8000

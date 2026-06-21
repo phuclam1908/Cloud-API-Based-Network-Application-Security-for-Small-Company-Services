@@ -41,7 +41,7 @@
 
 ### Xác thực và phân quyền
 - OAuth2 + OIDC với PKCE (Authorization Code Flow) cho public clients
-- JWT RS256 — được verify tại Kong API Gateway
+- JWT ES256 — được verify tại Kong API Gateway
 - 3 roles: `admin`, `seller`, `user`
 - RBAC enforcement tại FastAPI layer
 - Access token ngắn hạn: 300 giây

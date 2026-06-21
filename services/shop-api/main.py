@@ -10,7 +10,7 @@ DB_HOST = os.getenv("DB_HOST", "shop-postgres-postgresql.apps.svc.cluster.local"
 DB_NAME = os.getenv("DB_NAME", "shopdb")
 DB_USER = os.getenv("DB_USER", "shop")
 DB_PASS = os.getenv("DB_PASS", "shop_db_pass_123")
-ALGORITHM = "RS256"
+ALGORITHM = "ES256"
 SERVICE_NAME = "shop-api"
 
 def log(level, event, **kwargs):
@@ -118,8 +118,11 @@ async def verify_jwt(request: Request,
     token = credentials.credentials
     correlation_id = request.headers.get("X-Request-Id", str(uuid.uuid4()))
     try:
-        payload = jwt.decode(token, options={"verify_signature": False,
-            "verify_exp": False, "verify_aud": False}, algorithms=[ALGORITHM])
+        client = get_jwks_client()
+        signing_key = client.get_signing_key_from_jwt(token)
+        payload = jwt.decode(token, signing_key.key,
+            algorithms=[ALGORITHM],
+            options={"verify_exp": True, "verify_aud": False})
         payload["_correlation_id"] = correlation_id
         return payload
     except jwt.ExpiredSignatureError:

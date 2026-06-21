@@ -14,7 +14,7 @@ DB_HOST = os.getenv("DB_HOST", "shop-postgres-postgresql.apps.svc.cluster.local"
 DB_NAME = os.getenv("DB_NAME", "shopdb")
 DB_USER = os.getenv("DB_USER", "shop")
 DB_PASS = os.getenv("DB_PASS", "shop_db_pass_123")
-ALGORITHM = "RS256"
+ALGORITHM = "ES256"
 SERVICE_NAME = "admin-api"
 
 def log(level, event, **kwargs):

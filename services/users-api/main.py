@@ -5,7 +5,7 @@ from datetime import datetime
 
 JWKS_URL = os.getenv("JWKS_URL",
     "http://keycloak.keycloak.svc.cluster.local/realms/company/protocol/openid-connect/certs")
-ALGORITHM = "RS256"
+ALGORITHM = "ES256"
 SERVICE_NAME = "users-api"
 
 def log(level, event, **kwargs):
